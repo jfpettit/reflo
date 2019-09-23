@@ -2,7 +2,7 @@ import numpy as np
 import tensorflow as tf
 import tensorflow.keras as keras
 import tensorflow_probability as tfp
-import utils
+from rlpacktf import utils 
 from gym.spaces import Discrete, Box
 import sonnet as snt
 

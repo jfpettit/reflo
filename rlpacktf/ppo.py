@@ -2,10 +2,10 @@ import numpy as np
 import tensorflow as tf
 import tensorflow.keras as keras
 import tensorflow_probability as tfp
-import utils
+from rlpacktf import utils
 from gym.spaces import Discrete, Box
 import sonnet as snt
-from a2c import A2C
+from rlpacktf.a2c import A2C
 
 
 class PPO(A2C):
