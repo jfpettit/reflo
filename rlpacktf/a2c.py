@@ -95,6 +95,8 @@ class A2C:
 
         obs, reward, done, ep_return, ep_length = self.env.reset(), 0, False, 0, 0
 
+        all_train_ep_rews = []
+        all_train_ep_lens = []
         for epoch in range(epochs):
             epochrew = []
             epochlen = []
@@ -122,6 +124,8 @@ class A2C:
                     if done:
                         epochlen.append(ep_length)
                         epochrew.append(ep_return)
+                        all_train_ep_lens.append(ep_length)
+                        all_train_ep_rews.append(ep_return)
 
                     obs, reward, done, ep_return, ep_length = self.env.reset(), 0, False, 0, 0
 
@@ -143,6 +147,7 @@ class A2C:
 
             if render_epochs is not None and epoch in render_epochs:
                 self.watch_model(render_frames=render_frames)
+        return all_train_ep_rews, all_train_ep_lens
 
     def watch_model(self, render_frames=250):
         obs = self.env.reset()
