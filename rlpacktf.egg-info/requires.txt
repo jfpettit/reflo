@@ -1,9 +1,0 @@
-numpy
-tensorflow
-gym
-scipy
-dm-sonnet
-tensorflow-probability
-pandas
-matplotlib
-roboschool
