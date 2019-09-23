@@ -16,6 +16,8 @@ cd rlpack-tf
 pip install -e .
 ```
 
+This install method will also install of the requirements listed below. It is recommended to use a virtual env when installing this code, to avoid issues that might come from different package versions.
+
 rlpack-tf has the following requirements:
 - [NumPy](https://numpy.org/)
 - [TensorFlow](https://tensorflow.org/)
