@@ -1,7 +1,0 @@
-README.md
-setup.py
-rlpacktf.egg-info/PKG-INFO
-rlpacktf.egg-info/SOURCES.txt
-rlpacktf.egg-info/dependency_links.txt
-rlpacktf.egg-info/requires.txt
-rlpacktf.egg-info/top_level.txt
