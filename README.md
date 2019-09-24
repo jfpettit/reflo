@@ -37,6 +37,7 @@ rlpack-tf is intended to be used in python files or in Jupyter notebooks. The AP
 
 ```python
 import gym
+import roboschool
 from rlpacktf import ppo
 
 env = gym.make('RoboschoolInvertedPendulum-v1')
