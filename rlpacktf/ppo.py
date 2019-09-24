@@ -11,7 +11,18 @@ from rlpacktf.a2c import A2C
 class PPO(A2C):
     def __init__(self, env, actor=snt.nets.MLP, critic=snt.nets.MLP, actor_critic_hidden_sizes=[32, 32], epoch_interactions=4000, epochs=50,
                  gamma=0.99, policy_learning_rate=3e-4, valuef_learning_rate=1e-3, valuef_train_iters=80, policy_train_iters=80, lam=0.97,
-                 max_episode_length=1000, epsilon=0.2, max_kl=0.01):
+                 max_episode_length=1000, epsilon=0.2, max_kl=0.01, track_run=False, track_dir=None, plot_when_done=False):
+
+        self.plot_when_done = plot_when_done
+        if self.plot_when_done:
+            self.plotter = utils.Plotter()
+
+        self.track_run = track_run
+
+        if track_run:
+            assert track_dir is not None, 'In order to track the run you must provide a directory to save run details to.'
+            self.tracker = utils.Tracker(track_dir)
+            self.tracker.add_metrics('mean_episode_return', 'mean_episode_length', 'std_episode_return')
 
         observation_shape = env.observation_space.shape
         action_shape = env.action_space.shape

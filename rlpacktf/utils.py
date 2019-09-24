@@ -2,11 +2,44 @@ import numpy as np
 import tensorflow as tf
 from scipy.signal import lfilter
 from gym.spaces import Box, Discrete
+import matplotlib.pyplot as plt
+import pandas as pd
+import os
 
-class Saver:
-    def __init__(self):
-        pass        
+class Plotter:
+    def __init__(self, dark=True):
+        if dark:
+            plt.style.use("seaborn-darkgrid")
 
+    def plot(self, data, key='mean_episode_return'):
+        data = pd.Series(data).rolling(window=len(data)//10).mean()
+        datastd = pd.Series(data).rolling(window=len(data)//10).std()
+        plt.plot(data)
+        plt.title(key+' per episode')
+        plt.xlabel('episodes')
+        plt.ylabel(key)
+        plt.fill_between(range(len(data)), data+datastd, data-datastd, alpha=0.2)
+        plt.show()
+
+
+class Tracker:
+    def __init__(self, track_dir):
+        self.track_dict = {}
+        self.track_dir = track_dir
+
+    def add_metrics(self, *args):
+        for arg in args:
+            self.track_dict[arg] = []
+
+    def update_metrics(self, **kwargs):
+        for key, value in kwargs.items():
+            self.track_dict[key].append(value)
+
+    def save_metrics(self):
+        if not os.path.isdir(self.track_dir):
+            os.mkdir(self.track_dir)
+        for key in list(self.track_dict.keys()):
+            np.save(self.track_dir+'/'+key, self.track_dict[key])
 
 class Buffer:
     def __init__(self, state_dim, action_dim, size, gamma=0.99, lam=0.97):

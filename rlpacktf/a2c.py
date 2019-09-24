@@ -10,7 +10,18 @@ import sonnet as snt
 class A2C:
     def __init__(self, env, actor=snt.nets.MLP, critic=snt.nets.MLP, actor_critic_hidden_sizes=[32, 32], epoch_interactions=4000,
                  epochs=50, gamma=0.99, policy_learning_rate=3e-4, valuef_learning_rate=1e-3, valuef_train_iters=80, lam=0.97, 
-                 max_episode_length=1000):
+                 max_episode_length=1000, track_run=False, track_dir=None, plot_when_done=False):
+
+        self.plot_when_done = plot_when_done
+        if self.plot_when_done:
+            self.plotter = utils.Plotter()
+
+        self.track_run = track_run
+
+        if track_run:
+            assert track_dir is not None, 'In order to track the run you must provide a directory to save run details to.'
+            self.tracker = utils.Tracker(track_dir)
+            self.tracker.add_metrics('mean_episode_return', 'mean_episode_length', 'std_episode_return')
 
         observation_shape = env.observation_space.shape
         action_shape = env.action_space.shape
@@ -21,12 +32,12 @@ class A2C:
             None, None, None)
 
         value_f = critic(actor_critic_hidden_sizes +
-                         [1], activation=tf.nn.tanh, activate_final=False)
+                         [1], activation=tf.nn.tanh, activate_final=False, name="value_f")
         self.state_values = value_f(self.observation_ph)
 
         if isinstance(env.action_space, Discrete):
             policy = actor(actor_critic_hidden_sizes +
-                           [env.action_space.n], activation=tf.nn.tanh, activate_final=False)
+                           [env.action_space.n], activation=tf.nn.tanh, activate_final=False, name="policy")
             logits = policy(self.observation_ph)
             logprobs_all = tf.nn.log_softmax(logits)
             action = tf.squeeze(tf.multinomial(logits, 1), axis=1)
@@ -37,7 +48,7 @@ class A2C:
 
         elif isinstance(env.action_space, Box):
             policy = actor(actor_critic_hidden_sizes +
-                           [env.action_space.shape[0]], activation=tf.nn.tanh, activate_final=False)
+                           [env.action_space.shape[0]], activation=tf.nn.tanh, activate_final=False, name="policy")
             act_dim = advantage_ph.shape.as_list()[-1]
             mu = policy(self.observation_ph)
             log_std = tf.convert_to_tensor(-0.5*np.ones(act_dim,
@@ -145,8 +156,17 @@ class A2C:
                 'ApproxKL: {}\n'.format(kl),
                 '\n', end='')
 
+            if self.track_run:
+                self.tracker.update_metrics(mean_episode_return=np.mean(epochrew), mean_episode_length=np.mean(epochlen),
+                    std_episode_return=np.std(epochrew))
+                self.tracker.save_metrics()
+
             if render_epochs is not None and epoch in render_epochs:
                 self.watch_model(render_frames=render_frames)
+        
+        if self.plot_when_done:
+            self.plotter.plot(all_train_ep_rews)
+
         return all_train_ep_rews, all_train_ep_lens
 
     def watch_model(self, render_frames=250):
@@ -159,3 +179,4 @@ class A2C:
             if done:
                 obs = self.env.reset()
         self.env.close()
+
