@@ -9,7 +9,7 @@ from rlpacktf.ppo import PPO
 import sonnet as snt
 
 if __name__ == '__main__':
-    env = gym.make('RoboschoolInvertedPendulum-v1')
+    env = gym.make('RoboschoolHalfCheetah-v1')
 
-    ppo = PPO(env, plot_when_done=True)
-    ppo.learn(epochs=10)
+    ppo = PPO(env, actor_critic_hidden_sizes=[64, 64], plot_when_done=True, max_episode_length=2000, epoch_interactions=8000)
+    ppo.learn(epochs=100, render_epochs=[99], render_frames=1000)

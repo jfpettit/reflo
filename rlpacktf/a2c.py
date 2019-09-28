@@ -2,8 +2,9 @@ import numpy as np
 import tensorflow as tf
 import tensorflow.keras as keras
 import tensorflow_probability as tfp
-from rlpacktf import utils 
+from rlpacktf import utils, mpi_utils
 from gym.spaces import Discrete, Box
+from gym import wrappers
 import sonnet as snt
 
 
@@ -17,6 +18,7 @@ class A2C:
             self.plotter = utils.Plotter()
 
         self.track_run = track_run
+        self.track_dir = track_dir
 
         if track_run:
             assert track_dir is not None, 'In order to track the run you must provide a directory to save run details to.'
@@ -102,7 +104,7 @@ class A2C:
 
         return new_policy_loss, new_value_loss, kl_divergence, entropy
 
-    def learn(self, epochs=50, render_epochs=None, render_frames=250):
+    def learn(self, epochs=50, render_epochs=None, render_frames=250, save_renders=False):
 
         obs, reward, done, ep_return, ep_length = self.env.reset(), 0, False, 0, 0
 
@@ -162,21 +164,31 @@ class A2C:
                 self.tracker.save_metrics()
 
             if render_epochs is not None and epoch in render_epochs:
-                self.watch_model(render_frames=render_frames)
+                self.watch_model(render_frames=render_frames, save_renders=save_renders, epoch=epoch)
         
         if self.plot_when_done:
             self.plotter.plot(all_train_ep_rews)
 
         return all_train_ep_rews, all_train_ep_lens
 
-    def watch_model(self, render_frames=250):
-        obs = self.env.reset()
+    def watch_model(self, render_frames=250, save_renders=False, epoch=None):
+        if save_renders:
+            if self.track_dir:
+                path=self.track_dir+'/'+self.env.unwrapped.spec.id+str(epoch)
+            else:
+                path=self.env.unwrapped.spec.id+str(epoch)
+            local_env = wrappers.Monitor(env, path, 
+                video_callable=lambda episode_id: True, force=True)
+        else:
+            local_env = self.env
+
+        obs = local_env.reset()
         for frame in range(render_frames):
             action, value, logprobs_step = self.sess.run(
                 self.get_action, feed_dict={self.observation_ph: obs.reshape(1, -1)})
             obs, rew, done, _ = self.env.step(action[0])
-            self.env.render()
+            local_env.render()
             if done:
-                obs = self.env.reset()
-        self.env.close()
+                obs = local_env.reset()
+        local_env.close()
 

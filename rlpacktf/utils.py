@@ -12,13 +12,13 @@ class Plotter:
             plt.style.use("seaborn-darkgrid")
 
     def plot(self, data, key='mean_episode_return'):
-        data = pd.Series(data).rolling(window=len(data)//10).mean()
-        datastd = pd.Series(data).rolling(window=len(data)//10).std()
-        plt.plot(data)
+        datamu = pd.Series(data).rolling(window=len(data)//10, min_periods=1).mean()
+        datastd = pd.Series(data).rolling(window=len(data)//10, min_periods=1).std()
+        plt.plot(datamu)
         plt.title(key+' per episode')
         plt.xlabel('episodes')
         plt.ylabel(key)
-        plt.fill_between(range(len(data)), data+datastd, data-datastd, alpha=0.2)
+        plt.fill_between(range(len(datamu)), data+datastd, data-datastd, alpha=0.2)
         plt.show()
 
 
