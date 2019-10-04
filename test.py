@@ -6,10 +6,10 @@ import roboschool
 import pandas as pd
 from rlpacktf.a2c import A2C
 from rlpacktf.ppo import PPO
+from rlpacktf import mpi_utils
 import sonnet as snt
 
 if __name__ == '__main__':
-    env = gym.make('RoboschoolHalfCheetah-v1')
-
-    ppo = PPO(env, actor_critic_hidden_sizes=[64, 64], plot_when_done=True, max_episode_length=2000, epoch_interactions=8000)
-    ppo.learn(epochs=100, render_epochs=[99], render_frames=1000)
+    mpi_utils.mpi_fork(2)
+    ppo = PPO(lambda: gym.make('RoboschoolAnt-v1'))
+    ppo.learn(epochs=200, render_epochs=[199], render_frames=1000, ncpu=2)

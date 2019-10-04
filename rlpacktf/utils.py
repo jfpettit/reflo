@@ -5,6 +5,7 @@ from gym.spaces import Box, Discrete
 import matplotlib.pyplot as plt
 import pandas as pd
 import os
+from rlpacktf import mpi_utils
 
 class Plotter:
     def __init__(self, dark=True):
@@ -44,8 +45,6 @@ class Tracker:
 class Buffer:
     def __init__(self, state_dim, action_dim, size, gamma=0.99, lam=0.97):
         self.size = size
-        self.state_dim = state_dim
-        self.action_dim = action_dim
         self.gamma = gamma
         self.lam = lam
 
@@ -62,7 +61,7 @@ class Buffer:
         self.point_idx, self.start_idx = 0, 0
 
     def push(self, state, action, reward, value, logprob):
-        assert self.point_idx <= self.size
+        assert self.point_idx < self.size
 
         self.state_record[self.point_idx] = state
         self.action_record[self.point_idx] = action
@@ -92,14 +91,19 @@ class Buffer:
         self.start_idx = self.point_idx
 
     def gather(self):
-        assert self.point_idx == self.size
+        assert self.point_idx == self.size, 'Buffer has to be full before you can gather.'
 
         self.point_idx, self.start_idx = 0, 0
-        self.advantage_record = (self.advantage_record - np.mean(
-            self.advantage_record))/(np.std(self.advantage_record) + 1e-8)
+        advantage_mean, advantage_std = mpi_utils.mpi_statistics_scalar(self.advantage_record)
+        self.advantage_record = (self.advantage_record - advantage_mean)/(advantage_std + 1e-8)
 
         return [self.state_record, self.action_record, self.advantage_record, self.return_record, self.logprobs_record]
 
+
+def save_network(net, logdir, env_name):
+    if not os.path.isdir(logdir):
+        os.mkdir(logdir)
+    net.save_weights(logdir+'/'+env_name+'_policy_checkpoint')
 
 def calc_log_probs(action_mu, action_logstd, action):
     lp = -0.5 * (((action-action_mu)/(tf.exp(action_logstd)+1e-8))
