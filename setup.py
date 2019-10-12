@@ -11,7 +11,7 @@ setuptools.setup(
     short_description='TensorFlow implementations of some reinforcement learning algorithms. Intended to be user friendly.',
     long_description=long_description,
 	url='https://github.com/jfpettit/rlpack-tf',
-	install_requires=['numpy', 'tensorflow', 'gym', 'scipy', 'dm-sonnet',
-		'tensorflow-probability', 'pandas', 'matplotlib', 'roboschool']
+	install_requires=['numpy', 'tensorflow==1.15.0rc2', 'gym', 'scipy', 'dm-sonnet',
+		'tensorflow-probability', 'pandas', 'matplotlib', 'roboschool', 'mpi4py']
 	,
 )

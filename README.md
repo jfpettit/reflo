@@ -20,7 +20,7 @@ This install method will also install of the requirements listed below. It is re
 
 rlpack-tf has the following requirements:
 - [NumPy](https://numpy.org/)
-- [TensorFlow](https://tensorflow.org/)
+- [TensorFlow 1.15]https://www.tensorflow.org/versions/r1.15/api_docs/python/tf)
 - [Gym](https://gym.openai.com/)
 - [SciPy](https://www.scipy.org/)
 - [DeepMind Sonnet](https://sonnet.readthedocs.io/en/latest/)
@@ -28,8 +28,9 @@ rlpack-tf has the following requirements:
 - [Pandas](https://pandas.pydata.org/)
 - [MatPlotLib](https://matplotlib.org/)
 - [Roboschool](https://github.com/openai/roboschool)
+- [MPI for Python](https://mpi4py.readthedocs.io/en/stable/)
 
-The Gym and Roboschool requirements will be needed to run example files that'll be added in the future. Currently, Pandas and MatPlotLib aren't really used in the package, but will be when I add an automatic plotting utility. 
+The Gym and Roboschool requirements will be needed to run example files that'll be added in the future. Note that mpi4py will require that you have a working MPI installed on your machine. Here are installation guides for a [Mac](http://www.science.smith.edu/dftwiki/index.php/Install_MPI_on_a_MacBook), and for [Windows](https://nyu-cds.github.io/python-mpi/setup/).
 
 ## Usage
 
@@ -40,18 +41,53 @@ import gym
 import roboschool
 from rlpacktf import ppo
 
-env = gym.make('RoboschoolInvertedPendulum-v1')
-learner = ppo.PPO(env)
-train_ep_returns, train_ep_lens = learner.learn()
+agent = ppo.PPO(lambda : gym.make('RoboschoolInvertedPendulum-v1'))
+train_ep_returns, train_ep_lens = agent.learn()
 ```
 
-You can then visualize the outputs. the ```.learn()``` function also takes some other arguments. Currently, these are best discovered by looking at the code. In the future, I'll add thorough examples demonstrating usage of the package and, if there is demand, will produce a docs page.
+You can then visualize the outputs. 
 
-The default policy and value functions are MLPs from the Sonnet library. If you'd like to write your own custom MLP, you can, but it must follow the same API that the Sonnet MLP does, [described here](https://sonnet.readthedocs.io/en/latest/api.html#mlp).
+The PPO and A2C classes also have some arguments, mostly optional. They share the majority of these but PPO has a couple of arguments that A2C does not.
+
+The shared arguments; an argument is optional unless specified otherwise:
+- ```env_func```: Not optional. A function initializing the environment you'd like to run.
+- ```actor```: a function which takes in a list of integers and returns a neural network with hidden layer sizes from that list of integers. Default: ```sonnet.nets.MLP```.
+- ```critic```: a function which takes in a list of integers and returns a neural network with hidden layer sizes from that list of integers. Default: ```sonnet.nets.MLP```.
+- ```actor_critic_hidden_sizes```: a list of numbers representing the hidden layer sizes for the actor and critic. Default: ```[32, 32]```.
+- ```epoch_interactions```: interaction steps taken per epoch. Default: 4000.
+- ```gamma```: reward discount factor. Default: 0.99.
+- ```policy_learning_rate```: learning rate of the policy optimizer. Default: ```3e-4```.
+- ```valuef_learning_rate```: learning rate of the value function optimizer. Default: ```1e-3```.
+- ```valuef_train_iters```: number of training steps for the value function per epoch. Default: 80
+- ```lam```: lambda from GAE-lambda advantage estimation. Default: 0.97.
+- ```max_episode_length```: maximum number of interactions allowed in an episode. Default: 1000.
+- ```track_run```: Boolean, whether to save data tracked during the run into .npy files. Default: False.
+- ```track_dir```: String, directory to save the run data to. Required if ```track_run``` set to true. Default: None.
+- ```plot_when_done```: Boolean, whether to plot a reward curve when training is finished. Default: False.
+- ```logger_fname```: String, filename to output logger dumps to. It uses ```track_dir``` for the directory to store this file in. Default: None.
+
+Following are a couple of arguments that are PPO specific:
+- ```policy_train_iters```: Integer, training steps per epoch to do for the policy. Default = 80
+- ```epsilon```: Float, value in the loss function to restrict how far the new policy gets from the old. Default = 0.2.
+- ```max_kl```: Float, maximum KL divergence allowed between the new policy and the old. Default = 0.01.
+
+The ```.learn()``` function also takes the following optional arguments:
+- ```epochs```: Integer, number of epochs to train for. Default: 50. 
+- ```render_epochs```: List of integers, epochs on which to watch the policy interact with the environment. Default: None.
+- ```render_frames```: Integer, number of interaction frames to watch. Default: 250.
+- ```save_renders```: Boolean, whether or not to save the frames of agent-environment interaction. Default: False.
+- ```save_policies```: Boolean, whether to save policies over training. Only saves if the updated policy performs better than the previous one. This functionality needs to be tested still to ensure it works properly. Default: False.
+- ```ncpu```: Integer, number of CPUs to parallelize the training over. Default: 1. 
+
+In the future, I'll add thorough examples demonstrating usage of the package and, if there is demand, will produce a docs page.
+
+The default policy and value functions are MLPs from the Sonnet library. If you'd like to write your own custom network, you can, but it must follow the same API that the Sonnet MLP does, [described here](https://sonnet.readthedocs.io/en/latest/api.html#mlp).
+
+This code has not been tested with recurrent networks.
 
 ## Future Plans
-- Add model and results saving utility
-- Add plotting utility
+- Test model and results saving utility
+- Add support for recurrent networks
 - Benchmark A2C and PPO on a suite of tasks
 - Implement other algorithms listed above
 - Blog post

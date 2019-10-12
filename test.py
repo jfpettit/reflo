@@ -10,6 +10,5 @@ from rlpacktf import mpi_utils
 import sonnet as snt
 
 if __name__ == '__main__':
-    mpi_utils.mpi_fork(2)
-    ppo = PPO(lambda: gym.make('RoboschoolAnt-v1'))
-    ppo.learn(epochs=200, render_epochs=[199], render_frames=1000, ncpu=2)
+    a2c = A2C(lambda: gym.make('RoboschoolAnt-v1'))
+    a2c.learn(epochs=200, render_epochs=[199], render_frames=1000, ncpu=2)

@@ -8,7 +8,7 @@ import time
 
 
 class PPO(A2C):
-    def __init__(self, env_func, actor=snt.nets.MLP, critic=snt.nets.MLP, actor_critic_hidden_sizes=[32, 32], epoch_interactions=4000, epochs=50,
+    def __init__(self, env_func, actor=snt.nets.MLP, critic=snt.nets.MLP, actor_critic_hidden_sizes=[32, 32], epoch_interactions=4000,
                  gamma=0.99, policy_learning_rate=3e-4, valuef_learning_rate=1e-3, valuef_train_iters=80, policy_train_iters=80, lam=0.97,
                  max_episode_length=1000, epsilon=0.2, max_kl=0.01, track_run=False, track_dir=None, plot_when_done=False, logger_fname=None):
 
@@ -17,7 +17,7 @@ class PPO(A2C):
         self.max_kl = max_kl
 
         self.init_common(env_func=env_func, actor=actor, critic=critic,
-                         actor_critic_hidden_sizes=actor_critic_hidden_sizes, epoch_interactions=epoch_interactions, epochs=epochs,
+                         actor_critic_hidden_sizes=actor_critic_hidden_sizes, epoch_interactions=epoch_interactions,
                          gamma=gamma, policy_learning_rate=policy_learning_rate, valuef_learning_rate=valuef_learning_rate,
                          valuef_train_iters=valuef_train_iters, lam=lam, max_episode_length=max_episode_length, track_run=track_run,
                          track_dir=track_dir, plot_when_done=plot_when_done, logger_fname=logger_fname)
