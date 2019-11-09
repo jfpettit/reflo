@@ -19,7 +19,7 @@ class A2C:
                          track_dir=track_dir, plot_when_done=plot_when_done, logger_fname=logger_fname)
 
     def init_common(self, env_func, actor, critic, actor_critic_hidden_sizes, epoch_interactions,
-                    gamma, policy_learning_rate, valuef_learning_rate, valuef_train_iters, lam, max_episode_length, 
+                    gamma, policy_learning_rate, valuef_learning_rate, valuef_train_iters, lam, max_episode_length,
                     track_run, track_dir, plot_when_done, logger_fname):
 
         env = env_func()
@@ -51,9 +51,9 @@ class A2C:
         self.state_values = value_f(self.observation_ph)
 
         if isinstance(env.action_space, Discrete):
-            policy = actor(actor_critic_hidden_sizes +
+            self.policy = actor(actor_critic_hidden_sizes +
                            [env.action_space.n], activation=tf.nn.tanh, activate_final=False, name='policy')
-            logits = policy(self.observation_ph)
+            logits = self.policy(self.observation_ph)
             logprobs_all = tf.nn.log_softmax(logits)
             action = tf.squeeze(tf.multinomial(logits, 1), axis=1)
             logprobs = tf.reduce_sum(tf.one_hot(
@@ -62,10 +62,10 @@ class A2C:
                 action, depth=env.action_space.n) * logprobs_all, axis=1)
 
         elif isinstance(env.action_space, Box):
-            policy = actor(actor_critic_hidden_sizes +
+            self.policy = actor(actor_critic_hidden_sizes +
                            [env.action_space.shape[0]], activation=tf.nn.tanh, activate_final=False, name='policy')
             act_dim = advantage_ph.shape.as_list()[-1]
-            mu = policy(self.observation_ph)
+            mu = self.policy(self.observation_ph)
             log_std = tf.convert_to_tensor(-0.5*np.ones(act_dim,
                                                         dtype=np.float32), dtype=tf.float32)
             std = tf.cast(tf.exp(log_std), dtype=tf.float32)
@@ -198,9 +198,9 @@ class A2C:
                 self.tracker.save_metrics()
 
             if save_policies and np.mean(epochrew) > last_save_ret:
+                saver = tf.compat.v1.train.Saver(max_to_keep=3)
                 last_save_ret = np.mean(epochrew)
-                utils.save_network(self.policy, self.track_dir,
-                                   self.env.unwrapped.spec.id)
+                saver.save(self.sess, self.track_dir+"/model_checkpoints/model_checkpoint_"+self.env.unwrapped.spec.id, global_step=epoch)
 
             if render_epochs is not None and epoch in render_epochs:
                 self.watch_model(render_frames=render_frames,

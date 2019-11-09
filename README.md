@@ -2,9 +2,9 @@
 
 This repository contains implementations of some reinforcement learning algorithms. The pytorch version of rlpack is [here](https://github.com/jfpettit/rl-pack) but it is targeted mainly at simplicity and clarity so that beginners can easily understand the code. rlpack-tf focuses more on performance, but also still tries to maintain readability. Much of the code is inspired by OpenAI's SpinningUp [course](https://spinningup.openai.com/en/latest/index.html). In the future, I'll update it for [TensorFlow 2.0](https://www.tensorflow.org/) and for the resulting update of DeepMind's Sonnet [library](https://sonnet.readthedocs.io/en/latest/).
 
-Currently this code includes implementations of [Advantage Actor Critic (A2C)](https://openai.com/blog/baselines-acktr-a2c/) and [Proximal Policy Optimization (PPO)](https://openai.com/blog/openai-baselines-ppo/). The SpinningUp page also includes clear, concise algorithm explanations. 
+Currently this code includes implementations of [Advantage Actor Critic (A2C)](https://openai.com/blog/baselines-acktr-a2c/) and [Proximal Policy Optimization (PPO)](https://openai.com/blog/openai-baselines-ppo/). The SpinningUp page also includes clear, concise algorithm explanations.
 
-In the future, I'll likely extend this library to include [Deep Deterministic Policy Gradients (DDPG)](https://arxiv.org/abs/1509.02971), [Twin Delayed DDPG (TD3)](https://spinningup.openai.com/en/latest/algorithms/td3.html) and [Soft Actor Critic (SAC)](https://spinningup.openai.com/en/latest/algorithms/sac.html). However, there is no schedule for when these algorithms will be released. 
+In the future, I'll likely extend this library to include [Deep Deterministic Policy Gradients (DDPG)](https://arxiv.org/abs/1509.02971), [Twin Delayed DDPG (TD3)](https://spinningup.openai.com/en/latest/algorithms/td3.html) and [Soft Actor Critic (SAC)](https://spinningup.openai.com/en/latest/algorithms/sac.html). However, there is no schedule for when these algorithms will be released.
 
 ## Installation
 
@@ -45,7 +45,7 @@ agent = ppo.PPO(lambda : gym.make('RoboschoolInvertedPendulum-v1'))
 train_ep_returns, train_ep_lens = agent.learn()
 ```
 
-You can then visualize the outputs. 
+You can then visualize the outputs.
 
 The PPO and A2C classes also have some arguments, mostly optional. They share the majority of these but PPO has a couple of arguments that A2C does not.
 
@@ -72,12 +72,14 @@ Following are a couple of arguments that are PPO specific:
 - ```max_kl```: Float, maximum KL divergence allowed between the new policy and the old. Default = 0.01.
 
 The ```.learn()``` function also takes the following optional arguments:
-- ```epochs```: Integer, number of epochs to train for. Default: 50. 
+- ```epochs```: Integer, number of epochs to train for. Default: 50.
 - ```render_epochs```: List of integers, epochs on which to watch the policy interact with the environment. Default: None.
 - ```render_frames```: Integer, number of interaction frames to watch. Default: 250.
 - ```save_renders```: Boolean, whether or not to save the frames of agent-environment interaction. Default: False.
-- ```save_policies```: Boolean, whether to save policies over training. Only saves if the updated policy performs better than the previous one. This functionality needs to be tested still to ensure it works properly. Default: False.
-- ```ncpu```: Integer, number of CPUs to parallelize the training over. Default: 1. 
+- ```save_session```: Boolean, whether to save the TF session over training. Only saves if the updated policy performs better than the previous one. Default: False.
+- ```ncpu```: Integer, number of CPUs to parallelize the training over. Default: 1.
+
+Using ```save_session``` will dump the TF session to the ```track_dir```. There is not yet a restore function, however, the session should be simple enough to restore by using Tensorflow's ```tf.train.Saver``` functionality.
 
 In the future, I'll add thorough examples demonstrating usage of the package and, if there is demand, will produce a docs page.
 
@@ -86,8 +88,8 @@ The default policy and value functions are MLPs from the Sonnet library. If you'
 This code has not been tested with recurrent networks.
 
 ## Future Plans
-- Test model and results saving utility
 - Add support for recurrent networks
 - Benchmark A2C and PPO on a suite of tasks
 - Implement other algorithms listed above
 - Blog post
+- Implement a session restoring functionality

@@ -10,5 +10,5 @@ from rlpacktf import mpi_utils
 import sonnet as snt
 
 if __name__ == '__main__':
-    a2c = A2C(lambda: gym.make('RoboschoolAnt-v1'))
-    a2c.learn(epochs=200, render_epochs=[199], render_frames=1000, ncpu=2)
+    agent = PPO(lambda: gym.make('RoboschoolInvertedPendulum-v1'), track_dir='test_logging')
+    agent.learn(epochs=200, ncpu=2, save_policies=True)
