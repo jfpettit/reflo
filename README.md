@@ -20,7 +20,7 @@ This install method will also install of the requirements listed below. It is re
 
 rlpack-tf has the following requirements:
 - [NumPy](https://numpy.org/)
-- [TensorFlow 1.15]https://www.tensorflow.org/versions/r1.15/api_docs/python/tf)
+- [TensorFlow 1.15](https://www.tensorflow.org/versions/r1.15/api_docs/python/tf)
 - [Gym](https://gym.openai.com/)
 - [SciPy](https://www.scipy.org/)
 - [DeepMind Sonnet](https://sonnet.readthedocs.io/en/latest/)
