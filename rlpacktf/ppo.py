@@ -10,7 +10,9 @@ import time
 class PPO(A2C):
     def __init__(self, env_func, actor=snt.nets.MLP, critic=snt.nets.MLP, actor_critic_hidden_sizes=[32, 32], epoch_interactions=4000,
                  gamma=0.99, policy_learning_rate=3e-4, valuef_learning_rate=1e-3, valuef_train_iters=80, policy_train_iters=80, lam=0.97,
-                 max_episode_length=1000, epsilon=0.2, max_kl=0.01, track_run=False, track_dir=None, plot_when_done=False, logger_fname=None):
+                 max_episode_length=1000, epsilon=0.2, max_kl=0.01, track_run=False, track_dir=None, plot_when_done=False, logger_fname=None, ncpu=1):
+
+        mpi_utils.mpi_fork(ncpu)
 
         self.epsilon = epsilon
         self.policy_train_iters = policy_train_iters
@@ -48,7 +50,7 @@ class PPO(A2C):
             kl = mpi_utils.mpi_avg(kl)
             if kl > 1.5 * self.max_kl:
                 self.logger.log_msg(
-                    'Reached max_kl at step {}. Early stopping.'.format(iter_), color='yellow')
+                    f'Reached max_kl at step {iter_} of {self.policy_train_iters}. Early stopping.', color='yellow')
                 break
 
         for _ in range(self.valuef_train_iters):

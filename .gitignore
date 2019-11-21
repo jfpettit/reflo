@@ -3,3 +3,4 @@ events.out.tfevents.1569183975.Jacobs-MacBook-Pro.local
 /rlpacktf.egg-info
 /rlpacktf/__pycache__
 .DS_Store
+**/test_logging

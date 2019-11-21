@@ -1,5 +1,7 @@
 # rlpack-tf
 
+**Note: there is an issue with the MPI parallelization in this code. Running an algorithm on a single CPU appears to work and yield satisfactory performance. However, when the number of CPUs is set to more than one, performance degrades. I'm working on a solid confirmation that the single-CPU code is correct and then will find and fix the error with running across multiple CPUs.**
+
 This repository contains implementations of some reinforcement learning algorithms. The pytorch version of rlpack is [here](https://github.com/jfpettit/rl-pack) but it is targeted mainly at simplicity and clarity so that beginners can easily understand the code. rlpack-tf focuses more on performance, but also still tries to maintain readability. Much of the code is inspired by OpenAI's SpinningUp [course](https://spinningup.openai.com/en/latest/index.html). In the future, I'll update it for [TensorFlow 2.0](https://www.tensorflow.org/) and for the resulting update of DeepMind's Sonnet [library](https://sonnet.readthedocs.io/en/latest/).
 
 Currently this code includes implementations of [Advantage Actor Critic (A2C)](https://openai.com/blog/baselines-acktr-a2c/) and [Proximal Policy Optimization (PPO)](https://openai.com/blog/openai-baselines-ppo/). The SpinningUp page also includes clear, concise algorithm explanations.
@@ -27,8 +29,9 @@ rlpack-tf has the following requirements:
 - [TensorFlow Probability](https://www.tensorflow.org/probability/)
 - [Pandas](https://pandas.pydata.org/)
 - [MatPlotLib](https://matplotlib.org/)
-- [Roboschool](https://github.com/openai/roboschool)
+- [Roboschool](https://github.com/openai/roboschool): Now deprecated by OpenAI Gym in favor of [pybullet envs](https://docs.google.com/document/d/10sXEhzFRSnvFcl3XxNGhnD4N2SedqwdAvK3dsihxVUA/edit#heading=h.2ye70wns7io3)
 - [MPI for Python](https://mpi4py.readthedocs.io/en/stable/)
+- [PyBullet envs](https://docs.google.com/document/d/10sXEhzFRSnvFcl3XxNGhnD4N2SedqwdAvK3dsihxVUA/edit#heading=h.2ye70wns7io3)
 
 The Gym and Roboschool requirements will be needed to run example files that'll be added in the future. Note that mpi4py will require that you have a working MPI installed on your machine. Here are installation guides for a [Mac](http://www.science.smith.edu/dftwiki/index.php/Install_MPI_on_a_MacBook), and for [Windows](https://nyu-cds.github.io/python-mpi/setup/).
 

@@ -10,7 +10,9 @@ import time
 class A2C:
     def __init__(self, env_func, actor=snt.nets.MLP, critic=snt.nets.MLP, actor_critic_hidden_sizes=[32, 32], epoch_interactions=4000,
                  gamma=0.99, policy_learning_rate=3e-4, valuef_learning_rate=1e-3, valuef_train_iters=80, lam=0.97,
-                 max_episode_length=1000, track_run=False, track_dir=None, plot_when_done=False, logger_fname=None):
+                 max_episode_length=1000, track_run=False, track_dir=None, plot_when_done=False, logger_fname=None, ncpu=1):
+
+        mpi_utils.mpi_fork(ncpu)
 
         self.init_common(env_func=env_func, actor=actor, critic=critic,
                          actor_critic_hidden_sizes=actor_critic_hidden_sizes, epoch_interactions=epoch_interactions,
@@ -55,11 +57,11 @@ class A2C:
                            [env.action_space.n], activation=tf.nn.tanh, activate_final=False, name='policy')
             logits = self.policy(self.observation_ph)
             logprobs_all = tf.nn.log_softmax(logits)
-            action = tf.squeeze(tf.multinomial(logits, 1), axis=1)
+            pi = tf.squeeze(tf.multinomial(logits, 1), axis=1)
             logprobs = tf.reduce_sum(tf.one_hot(
                 action_ph, depth=env.action_space.n) * logprobs_all, axis=1)
             logprobs_action = tf.reduce_sum(tf.one_hot(
-                action, depth=env.action_space.n) * logprobs_all, axis=1)
+                pi, depth=env.action_space.n) * logprobs_all, axis=1)
 
         elif isinstance(env.action_space, Box):
             self.policy = actor(actor_critic_hidden_sizes +
@@ -69,14 +71,15 @@ class A2C:
             log_std = tf.convert_to_tensor(-0.5*np.ones(act_dim,
                                                         dtype=np.float32), dtype=tf.float32)
             std = tf.cast(tf.exp(log_std), dtype=tf.float32)
-            action = mu + tf.random_normal(tf.shape(mu)) * std
+            # This part might be wrong.
+            pi = mu + tf.random_normal(tf.shape(mu)) * std
             logprobs = utils.calc_log_probs(mu, log_std, action_ph)
-            logprobs_action = utils.calc_log_probs(mu, log_std, action)
+            logprobs_action = utils.calc_log_probs(mu, log_std, pi)
 
         self.all_phs = [self.observation_ph, action_ph,
                         advantage_ph, return_ph, logprobs_old_ph]
 
-        self.get_action = [action, self.state_values, logprobs_action]
+        self.get_action = [pi, self.state_values, logprobs_action]
 
         self.approx_kl = tf.reduce_mean(logprobs_old_ph - logprobs)
         self.approx_entropy = tf.reduce_mean(-logprobs)
@@ -129,9 +132,8 @@ class A2C:
 
         return new_policy_loss, new_value_loss, kl_divergence, entropy
 
-    def learn(self, epochs=50, render_epochs=None, render_frames=250, save_renders=False, save_policies=False, ncpu=1):
+    def learn(self, epochs=50, render_epochs=None, render_frames=250, save_renders=False, save_policies=False):
 
-        mpi_utils.mpi_fork(ncpu)
 
         last_save_ret = -np.inf
 
