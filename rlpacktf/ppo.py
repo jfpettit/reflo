@@ -31,6 +31,7 @@ class PPO(A2C):
         logger_fname=None,
         ncpu=1,
         seed=None,
+        train_render=False
     ):
 
         mpi_utils.mpi_fork(ncpu)
@@ -56,6 +57,7 @@ class PPO(A2C):
             plot_when_done=plot_when_done,
             logger_fname=logger_fname,
             seed=seed,
+            train_render=train_render
         )
 
     def init_loss_funcs(self, **kwargs):
