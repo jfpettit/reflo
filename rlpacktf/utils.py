@@ -43,6 +43,9 @@ class Tracker:
             np.save(self.track_dir+'/'+key, self.track_dict[key])
 
 class Buffer:
+    """
+    Adapted from OpenAI SpinningUp code
+    """
     def __init__(self, state_dim, action_dim, size, gamma=0.99, lam=0.97):
         self.size = size
         self.gamma = gamma
@@ -106,26 +109,41 @@ def save_network(net, logdir, env_name):
     net.save_weights(logdir+'/'+env_name+'_policy_checkpoint')
 
 def calc_log_probs(action_mu, action_logstd, action):
+    """
+    Adapted from OpenAI SpinningUp code
+    """
     lp = -0.5 * (((action-action_mu)/(tf.exp(action_logstd)+1e-8))
                  ** 2 + 2*action_logstd + tf.log(2*tf.constant(np.pi, dtype=tf.float32)))
     return tf.reduce_sum(lp, axis=1)
 
 
 def combined_shape(length, shape=None):
+    """
+    Adapted from OpenAI SpinningUp code
+    """
     if shape is None:
         return (length,)
     return (length, shape) if np.isscalar(shape) else (length, *shape)
 
 
 def placeholder(dim=None):
+    """
+    Adapted from OpenAI SpinningUp code
+    """
     return tf.placeholder(dtype=tf.float32, shape=combined_shape(None, dim))
 
 
 def placeholders(*args):
+    """
+    Adapted from OpenAI SpinningUp code
+    """
     return [placeholder(dim) for dim in args]
 
 
 def placeholder_from_space(space):
+    """
+    Adapted from OpenAI SpinningUp code
+    """
     if isinstance(space, Box):
         return placeholder(space.shape)
     elif isinstance(space, Discrete):
@@ -134,4 +152,7 @@ def placeholder_from_space(space):
 
 
 def placeholders_from_spaces(*args):
+    """
+    Adapted from OpenAI SpinningUp code
+    """
     return [placeholder_from_space(space) for space in args]

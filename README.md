@@ -36,15 +36,23 @@ rlpack-tf has the following requirements:
 The Gym and Roboschool requirements will be needed to run example files that'll be added in the future. Note that mpi4py will require that you have a working MPI installed on your machine. Here are installation guides for a [Mac](http://www.science.smith.edu/dftwiki/index.php/Install_MPI_on_a_MacBook), and for [Windows](https://nyu-cds.github.io/python-mpi/setup/).
 
 ## Usage
+rlpack-tf can be used in the command line or in python files/Jupyter notebooks. To use it in the command line:
 
-rlpack-tf is intended to be used in python files or in Jupyter notebooks. The API is quite simple:
+```
+cd rlpack-tf
+python runner.py -h
+```
+
+This will list the full set of optional arguments for the command line runner. Running ```python runner.py``` will run with the default set of arguments.
+
+To use it in a Python file or Jupyter notebook, the API is quite simple:
 
 ```python
 import gym
 import roboschool
 from rlpacktf import ppo
 
-agent = ppo.PPO(lambda : gym.make('RoboschoolInvertedPendulum-v1'))
+agent = ppo.PPO(lambda : gym.make('RoboschoolInvertedPendulum-v1')) # or other Gym env
 train_ep_returns, train_ep_lens = agent.learn()
 ```
 

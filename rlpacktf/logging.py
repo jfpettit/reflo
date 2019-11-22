@@ -41,6 +41,9 @@ def colorize(string, color, bold=False, highlight=False):
 
 
 class Logging:
+    """
+    Modified from OpenAI SpinningUp code.
+    """
     def __init__(self, log_dir=None, output_fname=None):
         if mpi_utils.process_id() == 0:
             self.log_dir = log_dir or '/tmp/experiments/%i' % int(time.time())
