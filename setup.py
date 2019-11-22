@@ -12,6 +12,6 @@ setuptools.setup(
     long_description=long_description,
 	url='https://github.com/jfpettit/rlpack-tf',
 	install_requires=['numpy', 'tensorflow==1.15.0rc2', 'gym', 'scipy', 'dm-sonnet',
-		'tensorflow-probability', 'pandas', 'matplotlib', 'roboschool', 'mpi4py']
+		'tensorflow-probability', 'pandas', 'matplotlib', 'roboschool', 'mpi4py', 'pybullet']
 	,
 )
