@@ -50,7 +50,7 @@ To use it in a Python file or Jupyter notebook, the API is quite simple:
 ```python
 import gym
 import roboschool
-from rlpacktf import ppo
+from reflo import ppo
 
 agent = ppo.PPO(lambda : gym.make('RoboschoolInvertedPendulum-v1')) # or other Gym env
 train_ep_returns, train_ep_lens = agent.learn()
