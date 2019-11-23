@@ -1,8 +1,8 @@
-# rlpack-tf
+# reflo
 
 **Note: there is an issue with the MPI parallelization in this code. Running an algorithm on a single CPU appears to work and yield satisfactory performance. However, when the number of CPUs is set to more than one, performance degrades. I'm working on a solid confirmation that the single-CPU code is correct and then will find and fix the error with running across multiple CPUs.**
 
-This repository contains implementations of some reinforcement learning algorithms. The pytorch version of rlpack is [here](https://github.com/jfpettit/rl-pack) but it is targeted mainly at simplicity and clarity so that beginners can easily understand the code. rlpack-tf focuses more on performance, but also still tries to maintain readability. Much of the code is inspired by OpenAI's SpinningUp [course](https://spinningup.openai.com/en/latest/index.html). 
+This repository contains implementations of some reinforcement learning algorithms. The pytorch version of rlpack is [here](https://github.com/jfpettit/rl-pack) but it is targeted mainly at simplicity and clarity so that beginners can easily understand the code. reflo focuses more on performance, but also still tries to maintain readability. Much of the code is inspired by OpenAI's SpinningUp [course](https://spinningup.openai.com/en/latest/index.html). 
 
 Currently this code includes implementations of [Advantage Actor Critic (A2C)](https://openai.com/blog/baselines-acktr-a2c/) and [Proximal Policy Optimization (PPO)](https://openai.com/blog/openai-baselines-ppo/). The SpinningUp page also includes clear, concise algorithm explanations.
 
@@ -10,17 +10,17 @@ In the future, I'll likely extend this library to include [Deep Deterministic Po
 
 ## Installation
 
-You can install rlpack-tf with the following:
+You can install reflo with the following:
 
 ```
-git clone https://github.com/jfpettit/rlpack-tf.git
-cd rlpack-tf
+git clone https://github.com/jfpettit/reflo.git
+cd reflo
 pip install -e .
 ```
 
 This install method will also install of the requirements listed below. It is recommended to use a virtual env when installing this code, to avoid issues that might come from different package versions.
 
-rlpack-tf has the following requirements:
+reflo has the following requirements:
 - [NumPy](https://numpy.org/)
 - [TensorFlow 1.15](https://www.tensorflow.org/versions/r1.15/api_docs/python/tf)
 - [Gym](https://gym.openai.com/)
@@ -36,10 +36,10 @@ rlpack-tf has the following requirements:
 The Gym and Roboschool requirements will be needed to run example files that'll be added in the future. Note that mpi4py will require that you have a working MPI installed on your machine. Here are installation guides for a [Mac](http://www.science.smith.edu/dftwiki/index.php/Install_MPI_on_a_MacBook), and for [Windows](https://nyu-cds.github.io/python-mpi/setup/).
 
 ## Usage
-rlpack-tf can be used in the command line or in python files/Jupyter notebooks. To use it in the command line:
+reflo can be used in the command line or in python files/Jupyter notebooks. To use it in the command line:
 
 ```
-cd rlpack-tf
+cd reflo
 python runner.py -h
 ```
 

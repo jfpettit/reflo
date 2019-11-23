@@ -5,7 +5,7 @@ from gym.spaces import Box, Discrete
 import matplotlib.pyplot as plt
 import pandas as pd
 import os
-from rlpacktf import mpi_utils
+from reflo import mpi_utils
 
 class Plotter:
     def __init__(self, dark=True):
@@ -80,16 +80,16 @@ class Buffer:
     def end_trajectory(self, last_value=0):
         traj_slice = slice(self.start_idx, self.point_idx)
 
-        rews = self.rew_record[traj_slice]
+        rews = np.append(self.rew_record[traj_slice], last_value)
         vals = np.append(self.value_record[traj_slice], last_value)
 
-        deltas = rews + self.gamma * vals[1:] - vals[:-1]
+        deltas = rews[:-1] + self.gamma * vals[1:] - vals[:-1]
 
         self.advantage_record[traj_slice] = self.discount_cumulative_sum(
             deltas, self.gamma * self.lam)
 
         self.return_record[traj_slice] = self.discount_cumulative_sum(
-            rews, self.gamma)
+            rews, self.gamma)[:-1]
 
         self.start_idx = self.point_idx
 

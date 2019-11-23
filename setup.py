@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
 	long_description = fh.read()
 
 setuptools.setup(
-	name='rlpacktf',
+	name='reflo',
 	version='0.01',
 	author='Jacob Pettit',
 	author_email='jfpettit@gmail.com',

@@ -10,7 +10,7 @@ import os.path as osp
 import time
 import atexit
 import os
-import rlpacktf.mpi_utils as mpi_utils
+import reflo.mpi_utils as mpi_utils
 
 color2num = dict(
     gray=30,

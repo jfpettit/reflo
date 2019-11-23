@@ -1,4 +1,4 @@
-name = "rlpacktf"
+name = "reflo"
 
 __all__ = ['a2c', 'ppo', 'utils', 'mpi_utils', 'logging']
 

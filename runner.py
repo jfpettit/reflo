@@ -4,12 +4,13 @@ import numpy as np
 import gym
 import pybullet_envs
 import roboschool
-from rlpacktf.a2c import A2C
-from rlpacktf.ppo import PPO
-from rlpacktf import mpi_utils, logging
+from reflo.a2c import A2C
+from reflo.ppo import PPO
+from reflo import mpi_utils, logging
 import sonnet as snt
 import argparse
 import random
+import cartpole_swingup_envs
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--epochs', type=int, help='Number of epochs to train', default=100)

@@ -1,8 +1,8 @@
 # pylint: disable=import-error
 import numpy as np
 import tensorflow as tf
-from rlpacktf import utils, mpi_utils, logging
-from rlpacktf.a2c import A2C
+from reflo import utils, mpi_utils, logging
+from reflo.a2c import A2C
 from gym.spaces import Discrete, Box
 import sonnet as snt
 import time

@@ -1,7 +1,7 @@
 # pylint: disable=import-error
 import numpy as np
 import tensorflow as tf
-from rlpacktf import utils, mpi_utils, logging
+from reflo import utils, mpi_utils, logging
 from gym.spaces import Discrete, Box
 from gym import wrappers
 import sonnet as snt
