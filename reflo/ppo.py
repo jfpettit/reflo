@@ -6,6 +6,8 @@ from reflo.a2c import A2C
 from gym.spaces import Discrete, Box
 import sonnet as snt
 import time
+import ipdb
+import sys
 
 
 class PPO(A2C):
@@ -61,15 +63,20 @@ class PPO(A2C):
         )
 
     def init_loss_funcs(self, **kwargs):
+        #ipdb.set_trace()
         pol_ratio = tf.exp(kwargs["logprobs"] - kwargs["logprobs_old_ph"])
-        clip_pol_ratio = tf.clip_by_value(pol_ratio, 1 - self.epsilon, 1 + self.epsilon)
+        #clip_pol_ratio = tf.clip_by_value(pol_ratio, 1 - self.epsilon, 1 + self.epsilon)
+        clip_pol_ratio = tf.where(kwargs["advantage_ph"]>0, (1+self.epsilon)*kwargs["advantage_ph"], (1-self.epsilon)*kwargs["advantage_ph"])
         self.policy_loss = -tf.reduce_mean(
             tf.minimum(
                 pol_ratio * kwargs["advantage_ph"],
-                clip_pol_ratio * kwargs["advantage_ph"],
+                clip_pol_ratio,
             )
         )
         self.value_loss = tf.reduce_mean((kwargs["return_ph"] - self.state_values) ** 2)
+
+        clipped = tf.logical_or(pol_ratio > (1+self.epsilon), pol_ratio < (1-self.epsilon))
+        self.epsilon = tf.reduce_mean(tf.cast(clipped, tf.float32))
 
         self.policy_optimizer = mpi_utils.MPIAdamOptimizer(
             learning_rate=kwargs["policy_learning_rate"]

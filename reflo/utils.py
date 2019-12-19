@@ -1,3 +1,4 @@
+# pylint: disable=import-error
 import numpy as np
 import tensorflow as tf
 from scipy.signal import lfilter
